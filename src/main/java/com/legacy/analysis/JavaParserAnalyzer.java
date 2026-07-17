@@ -11,17 +11,17 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 /**
- * Package for legacy code analysis.
+ * JavaParser analyzer for legacy code.
  */
-public class AnalysisPackage {
-    public static void main(String[] args) throws FileNotFoundException {
-        SourceRoot sourceRoot = new SourceRoot(new File("src/main/java"));
-        sourceRoot.parse("", new VoidVisitorAdapter<Void>() {
+public class JavaParserAnalyzer {
+    public void analyze(String filePath) throws FileNotFoundException {
+        CompilationUnit cu = com.github.javaparser.JavaParser.parse(new File(filePath));
+        cu.accept(new VoidVisitorAdapter<Void>() {
             @Override
             public void visit(ClassOrInterfaceDeclaration n, Void arg) {
                 super.visit(n, arg);
                 System.out.println(n.getNameAsString());
             }
-        });
+        }, null);
     }
 }
