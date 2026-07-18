@@ -14,6 +14,12 @@ import java.util.Scanner;
  * JavaParser analyzer for legacy code.
  */
 public class JavaParserAnalyzer {
+    private DependencyGraph dependencyGraph;
+
+    public JavaParserAnalyzer() {
+        this.dependencyGraph = new DependencyGraph();
+    }
+
     public void analyze(String filePath) throws FileNotFoundException {
         CompilationUnit cu = com.github.javaparser.JavaParser.parse(new File(filePath));
         cu.accept(new VoidVisitorAdapter<Void>() {
@@ -23,5 +29,9 @@ public class JavaParserAnalyzer {
                 System.out.println(n.getNameAsString());
             }
         }, null);
+    }
+
+    public DependencyGraph getDependencyGraph() {
+        return dependencyGraph;
     }
 }
