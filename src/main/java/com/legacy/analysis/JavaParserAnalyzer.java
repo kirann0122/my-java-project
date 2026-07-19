@@ -15,9 +15,11 @@ import java.util.Scanner;
  */
 public class JavaParserAnalyzer {
     private DependencyGraph dependencyGraph;
+    private RiskGraph riskGraph;
 
     public JavaParserAnalyzer() {
         this.dependencyGraph = new DependencyGraph();
+        this.riskGraph = new RiskGraph();
     }
 
     public void analyze(String filePath) throws FileNotFoundException {
@@ -27,11 +29,17 @@ public class JavaParserAnalyzer {
             public void visit(ClassOrInterfaceDeclaration n, Void arg) {
                 super.visit(n, arg);
                 System.out.println(n.getNameAsString());
+                // Add risk node for each class
+                riskGraph.addRiskNode(n.getNameAsString(), "high", "No test coverage");
             }
         }, null);
     }
 
     public DependencyGraph getDependencyGraph() {
         return dependencyGraph;
+    }
+
+    public RiskGraph getRiskGraph() {
+        return riskGraph;
     }
 }

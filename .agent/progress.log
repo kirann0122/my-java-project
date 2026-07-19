@@ -1,3 +1,4 @@
 1	2026-07-15	Set up Maven project skeleton with pom.xml and Main class
 2	2026-07-16	Add package structure for legacy code analysis, migration, and reporting
 3	2026-07-17	Implement basic JavaParser or Spoon integration for AST-based static analysis
+4	2026-07-18	Create a DependencyGraph class to store and manage code dependencies
