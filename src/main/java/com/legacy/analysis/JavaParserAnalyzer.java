@@ -3,6 +3,8 @@ package com.legacy.analysis;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.github.javaparser.utils.SourceRoot;
 
@@ -31,6 +33,17 @@ public class JavaParserAnalyzer {
                 System.out.println(n.getNameAsString());
                 // Add risk node for each class
                 riskGraph.addRiskNode(n.getNameAsString(), "high", "No test coverage");
+                // Add dependencies for each class
+                n.getMethods().forEach(method -> {
+                    method.getNodes().forEach(node -> {
+                        if (node instanceof MethodCallExpr) {
+                            MethodCallExpr methodCallExpr = (MethodCallExpr) node;
+                            String methodName = methodCallExpr.getNameAsString();
+                            String className = methodCallExpr.getScope().map(Node::toString).orElse("");
+                            dependencyGraph.addDependency(n.getNameAsString(), className);
+                        }
+                    });
+                });
             }
         }, null);
     }

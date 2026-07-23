@@ -9,5 +9,7 @@ public class Main {
         codebase.analyze();
         // Print risk graph
         System.out.println(codebase.getRiskGraph().getRiskNodes("AnalysisPackage"));
+        // Print dependency graph
+        System.out.println(codebase.getDependencyGraph().getDependencies("AnalysisPackage"));
     }
 }

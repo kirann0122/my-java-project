@@ -3,3 +3,4 @@
 3	2026-07-17	Implement basic JavaParser or Spoon integration for AST-based static analysis
 4	2026-07-18	Create a DependencyGraph class to store and manage code dependencies
 5	2026-07-19	Develop a RiskGraph class to store and manage risk analysis results
+6	2026-07-20	Add a LegacyCodebase class to represent the legacy codebase being analyzed
