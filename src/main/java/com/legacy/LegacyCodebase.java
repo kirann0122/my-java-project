@@ -1,5 +1,6 @@
 package com.legacy;
 
+import com.legacy.analysis.CharacterizationTestGenerator;
 import com.legacy.analysis.JavaParserAnalyzer;
 import com.legacy.analysis.RiskGraph;
 import com.legacy.analysis.DependencyGraph;
@@ -17,6 +18,7 @@ public class LegacyCodebase {
     private JavaParserAnalyzer analyzer;
     private RiskGraph riskGraph;
     private DependencyGraph dependencyGraph;
+    private CharacterizationTestGenerator testGenerator;
 
     public LegacyCodebase(String rootDirectory) {
         this.rootDirectory = rootDirectory;
@@ -24,6 +26,7 @@ public class LegacyCodebase {
         this.analyzer = new JavaParserAnalyzer();
         this.riskGraph = analyzer.getRiskGraph();
         this.dependencyGraph = analyzer.getDependencyGraph();
+        this.testGenerator = new CharacterizationTestGenerator();
     }
 
     public void addSourceFile(String filePath) {
@@ -33,6 +36,7 @@ public class LegacyCodebase {
     public void analyze() throws Exception {
         for (String sourceFile : sourceFiles) {
             analyzer.analyze(sourceFile);
+            testGenerator.generateTests(sourceFile);
         }
     }
 
@@ -42,5 +46,9 @@ public class LegacyCodebase {
 
     public DependencyGraph getDependencyGraph() {
         return dependencyGraph;
+    }
+
+    public List<String> getTestMethods() {
+        return testGenerator.getTestMethods();
     }
 }

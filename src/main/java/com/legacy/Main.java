@@ -11,5 +11,7 @@ public class Main {
         System.out.println(codebase.getRiskGraph().getRiskNodes("AnalysisPackage"));
         // Print dependency graph
         System.out.println(codebase.getDependencyGraph().getDependencies("AnalysisPackage"));
+        // Print test methods
+        System.out.println(codebase.getTestMethods());
     }
 }
