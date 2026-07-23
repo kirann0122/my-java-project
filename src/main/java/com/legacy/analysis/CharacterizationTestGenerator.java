@@ -41,11 +41,26 @@ public class CharacterizationTestGenerator {
         String testMethod = "public void test" + methodName.substring(0, 1).toUpperCase() + methodName.substring(1) + "() {\n";
         testMethod += "    " + className + " instance = new " + className + "();\n";
         testMethod += "    instance." + methodName + "();\n";
+        testMethod += "    // Add assertions here\n";
         testMethod += "}";
         return testMethod;
     }
 
     public List<String> getTestMethods() {
         return testMethods;
+    }
+
+    public void generateCharacterizationTestsForUntouchedLegacyClasses(String rootDirectory) throws FileNotFoundException {
+        File directory = new File(rootDirectory);
+        File[] files = directory.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    generateCharacterizationTestsForUntouchedLegacyClasses(file.getAbsolutePath());
+                } else if (file.getName().endsWith(".java")) {
+                    generateTests(file.getAbsolutePath());
+                }
+            }
+        }
     }
 }

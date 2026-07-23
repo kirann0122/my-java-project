@@ -40,6 +40,10 @@ public class LegacyCodebase {
         }
     }
 
+    public void generateCharacterizationTestsForUntouchedLegacyClasses() throws Exception {
+        testGenerator.generateCharacterizationTestsForUntouchedLegacyClasses(rootDirectory);
+    }
+
     public RiskGraph getRiskGraph() {
         return riskGraph;
     }
