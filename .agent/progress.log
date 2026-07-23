@@ -6,3 +6,4 @@
 6	2026-07-20	Add a LegacyCodebase class to represent the legacy codebase being analyzed
 7	2026-07-23	Implement a method to parse the legacy codebase and build the dependency graph
 8	2026-07-23	Create a CharacterizationTestGenerator class to generate safety-net tests
+9	2026-07-23	Develop a method to generate characterization tests for untouched legacy classes
