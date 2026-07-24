@@ -58,4 +58,44 @@ public class CodeTransformer {
             }
         }
     }
+
+    public void autoMigrateSimplePatterns(String directoryPath) throws Exception {
+        File directory = new File(directoryPath);
+        File[] files = directory.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    autoMigrateSimplePatterns(file.getAbsolutePath());
+                } else if (file.getName().endsWith(".java")) {
+                    autoMigrateSimplePatternInFile(file.getAbsolutePath());
+                }
+            }
+        }
+    }
+
+    private void autoMigrateSimplePatternInFile(String filePath) throws Exception {
+        CompilationUnit cu = com.github.javaparser.JavaParser.parse(new File(filePath));
+        cu.accept(new VoidVisitorAdapter<Void>() {
+            @Override
+            public void visit(ClassOrInterfaceDeclaration n, Void arg) {
+                super.visit(n, arg);
+                n.getMethods().forEach(method -> {
+                    try {
+                        autoMigrateSimplePatternInMethod(method);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+            }
+        }, null);
+    }
+
+    private void autoMigrateSimplePatternInMethod(MethodDeclaration method) throws Exception {
+        // Check for simple patterns like XML bean configs and migrate them to modern Spring Boot annotations
+        if (method.getNameAsString().contains("xml")) {
+            String originalCode = method.toString();
+            String transformedCode = llmTransformer.transformCode(originalCode);
+            method.replace(originalCode, transformedCode);
+        }
+    }
 }

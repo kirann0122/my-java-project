@@ -4,7 +4,7 @@ import com.legacy.analysis.CodeTransformer;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        CodeTransformer codeTransformer = new CodeTransformer();
-        codeTransformer.transformCodeInDirectory("src/main/java");
+        CodeTransformer transformer = new CodeTransformer();
+        transformer.autoMigrateSimplePatterns("src/main/java");
     }
 }
