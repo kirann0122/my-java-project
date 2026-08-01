@@ -12,9 +12,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
-/**
- * JavaParser analyzer for legacy code.
- */
 public class JavaParserAnalyzer {
     private DependencyGraph dependencyGraph;
     private RiskGraph riskGraph;
@@ -54,5 +51,10 @@ public class JavaParserAnalyzer {
 
     public RiskGraph getRiskGraph() {
         return riskGraph;
+    }
+
+    public void visualizeRiskHeatmap() {
+        RiskHeatmapGenerator riskHeatmapGenerator = new RiskHeatmapGenerator(riskGraph);
+        riskHeatmapGenerator.generateHeatmap();
     }
 }

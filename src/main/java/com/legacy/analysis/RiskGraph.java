@@ -1,49 +1,38 @@
 package com.legacy.analysis;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
-/**
- * Represents a graph of code risks.
- */
 public class RiskGraph {
-    private Map<String, RiskLevel> risks;
+    private Map<String, RiskLevel> riskNodes;
 
     public RiskGraph() {
-        this.risks = new HashMap<>();
+        this.riskNodes = new HashMap<>();
     }
 
-    /**
-     * Adds a risk to the graph.
-     * 
-     * @param className the class that has a risk
-     * @param riskLevel the level of risk for the class
-     */
-    public void addRisk(String className, RiskLevel riskLevel) {
-        risks.put(className, riskLevel);
+    public void addRiskNode(String className, String riskLevel, String description) {
+        riskNodes.put(className, new RiskLevel(riskLevel, description));
     }
 
-    /**
-     * Gets the risk level for a given class.
-     * 
-     * @param className the class to get risk level for
-     * @return the risk level for the class
-     */
-    public RiskLevel getRisk(String className) {
-        return risks.getOrDefault(className, RiskLevel.LOW);
+    public Map<String, RiskLevel> getRiskNodes() {
+        return riskNodes;
     }
 
-    /**
-     * Removes a risk from the graph.
-     * 
-     * @param className the class that has a risk
-     */
-    public void removeRisk(String className) {
-        risks.remove(className);
-    }
+    public static class RiskLevel {
+        private String riskLevel;
+        private String description;
 
-    public enum RiskLevel {
-        LOW,
-        MEDIUM,
-        HIGH
+        public RiskLevel(String riskLevel, String description) {
+            this.riskLevel = riskLevel;
+            this.description = description;
+        }
+
+        public String getRiskLevel() {
+            return riskLevel;
+        }
+
+        public String getDescription() {
+            return description;
+        }
     }
 }
