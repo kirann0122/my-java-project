@@ -11,3 +11,4 @@
 11	2026-07-24	Implement a CodeTransformer class to apply AI-assisted transformations
 12	2026-07-24	Develop a method to auto-migrate simpler, high-confidence patterns
 13	2026-08-01	Create a RiskReporter class to generate human-readable risk reports
+14	2026-08-01	Implement a method to flag genuinely risky parts of the codebase
