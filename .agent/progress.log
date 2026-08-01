@@ -14,3 +14,4 @@
 14	2026-08-01	Implement a method to flag genuinely risky parts of the codebase
 15	2026-08-01	Set up the Spring Boot backend with basic REST API endpoints
 16	2026-08-01	Develop a MigrationProgressTracker class to track migration progress
+17	2026-08-01	Implement a method to visualize the codebase as a risk heatmap
