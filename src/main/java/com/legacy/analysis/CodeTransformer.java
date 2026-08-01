@@ -17,9 +17,11 @@ import java.util.List;
  */
 public class CodeTransformer {
     private LLMTransformer llmTransformer;
+    private RiskGraph riskGraph;
 
     public CodeTransformer() {
         this.llmTransformer = new LLMTransformer();
+        this.riskGraph = new RiskGraph();
     }
 
     public void transformCode(String filePath) throws Exception {
@@ -35,6 +37,7 @@ public class CodeTransformer {
                         throw new RuntimeException(e);
                     }
                 });
+                flagRiskyParts(n);
             }
         }, null);
     }
@@ -43,6 +46,14 @@ public class CodeTransformer {
         String originalCode = method.toString();
         String transformedCode = llmTransformer.transformCode(originalCode);
         method.replace(originalCode, transformedCode);
+    }
+
+    private void flagRiskyParts(ClassOrInterfaceDeclaration classDeclaration) {
+        if (classDeclaration.getMethods().size() > 10) {
+            riskGraph.addRisk(classDeclaration.getNameAsString(), RiskGraph.RiskLevel.HIGH);
+        } else if (classDeclaration.getMethods().size() > 5) {
+            riskGraph.addRisk(classDeclaration.getNameAsString(), RiskGraph.RiskLevel.MEDIUM);
+        }
     }
 
     public void transformCodeInDirectory(String directoryPath) throws Exception {

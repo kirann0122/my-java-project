@@ -6,49 +6,44 @@ import java.util.*;
  * Represents a graph of code risks.
  */
 public class RiskGraph {
-    private Map<String, String> riskLevels;
-    private Set<String> classes;
+    private Map<String, RiskLevel> risks;
 
     public RiskGraph() {
-        this.riskLevels = new HashMap<>();
-        this.classes = new HashSet<>();
+        this.risks = new HashMap<>();
     }
 
     /**
-     * Adds a class to the risk graph.
+     * Adds a risk to the graph.
      * 
-     * @param className the class to add
+     * @param className the class that has a risk
+     * @param riskLevel the level of risk for the class
      */
-    public void addClass(String className) {
-        classes.add(className);
-    }
-
-    /**
-     * Sets the risk level for a given class.
-     * 
-     * @param className the class to set the risk level for
-     * @param riskLevel the risk level to set
-     */
-    public void setRiskLevel(String className, String riskLevel) {
-        riskLevels.put(className, riskLevel);
+    public void addRisk(String className, RiskLevel riskLevel) {
+        risks.put(className, riskLevel);
     }
 
     /**
      * Gets the risk level for a given class.
      * 
-     * @param className the class to get the risk level for
+     * @param className the class to get risk level for
      * @return the risk level for the class
      */
-    public String getRiskLevel(String className) {
-        return riskLevels.getOrDefault(className, "Unknown");
+    public RiskLevel getRisk(String className) {
+        return risks.getOrDefault(className, RiskLevel.LOW);
     }
 
     /**
-     * Gets the classes in the risk graph.
+     * Removes a risk from the graph.
      * 
-     * @return a set of classes in the risk graph
+     * @param className the class that has a risk
      */
-    public Set<String> getClasses() {
-        return classes;
+    public void removeRisk(String className) {
+        risks.remove(className);
+    }
+
+    public enum RiskLevel {
+        LOW,
+        MEDIUM,
+        HIGH
     }
 }
