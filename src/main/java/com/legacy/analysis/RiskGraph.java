@@ -3,84 +3,52 @@ package com.legacy.analysis;
 import java.util.*;
 
 /**
- * Represents a graph of risk analysis results.
+ * Represents a graph of code risks.
  */
 public class RiskGraph {
-    private Map<String, RiskNode> riskNodes;
+    private Map<String, String> riskLevels;
+    private Set<String> classes;
 
     public RiskGraph() {
-        this.riskNodes = new HashMap<>();
+        this.riskLevels = new HashMap<>();
+        this.classes = new HashSet<>();
     }
 
     /**
-     * Adds a risk node to the graph.
+     * Adds a class to the risk graph.
      * 
-     * @param className the class that has a risk
-     * @param riskLevel the level of risk (e.g. high, medium, low)
-     * @param description a description of the risk
+     * @param className the class to add
      */
-    public void addRiskNode(String className, String riskLevel, String description) {
-        riskNodes.computeIfAbsent(className, k -> new RiskNode()).addRisk(riskLevel, description);
+    public void addClass(String className) {
+        classes.add(className);
     }
 
     /**
-     * Gets the risk nodes for a given class.
+     * Sets the risk level for a given class.
      * 
-     * @param className the class to get risk nodes for
-     * @return a list of risk nodes for the class
+     * @param className the class to set the risk level for
+     * @param riskLevel the risk level to set
      */
-    public List<Risk> getRiskNodes(String className) {
-        return riskNodes.getOrDefault(className, new RiskNode()).getRisks();
+    public void setRiskLevel(String className, String riskLevel) {
+        riskLevels.put(className, riskLevel);
     }
 
     /**
-     * Removes a risk node from the graph.
+     * Gets the risk level for a given class.
      * 
-     * @param className the class that has a risk
-     * @param riskLevel the level of risk (e.g. high, medium, low)
+     * @param className the class to get the risk level for
+     * @return the risk level for the class
      */
-    public void removeRiskNode(String className, String riskLevel) {
-        riskNodes.computeIfPresent(className, (k, v) -> {
-            v.removeRisk(riskLevel);
-            return v.getRisks().isEmpty() ? null : v;
-        });
+    public String getRiskLevel(String className) {
+        return riskLevels.getOrDefault(className, "Unknown");
     }
 
-    private class RiskNode {
-        private List<Risk> risks;
-
-        public RiskNode() {
-            this.risks = new ArrayList<>();
-        }
-
-        public void addRisk(String riskLevel, String description) {
-            risks.add(new Risk(riskLevel, description));
-        }
-
-        public List<Risk> getRisks() {
-            return risks;
-        }
-
-        public void removeRisk(String riskLevel) {
-            risks.removeIf(r -> r.getRiskLevel().equals(riskLevel));
-        }
-    }
-
-    private class Risk {
-        private String riskLevel;
-        private String description;
-
-        public Risk(String riskLevel, String description) {
-            this.riskLevel = riskLevel;
-            this.description = description;
-        }
-
-        public String getRiskLevel() {
-            return riskLevel;
-        }
-
-        public String getDescription() {
-            return description;
-        }
+    /**
+     * Gets the classes in the risk graph.
+     * 
+     * @return a set of classes in the risk graph
+     */
+    public Set<String> getClasses() {
+        return classes;
     }
 }
