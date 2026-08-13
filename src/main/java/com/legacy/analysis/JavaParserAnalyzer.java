@@ -15,10 +15,12 @@ import java.util.Scanner;
 public class JavaParserAnalyzer {
     private DependencyGraph dependencyGraph;
     private RiskGraph riskGraph;
+    private AnalysisResultRepository analysisResultRepository;
 
     public JavaParserAnalyzer() {
         this.dependencyGraph = new DependencyGraph();
         this.riskGraph = new RiskGraph();
+        this.analysisResultRepository = new AnalysisResultRepository();
     }
 
     public void analyze(String filePath) throws FileNotFoundException {
@@ -43,6 +45,10 @@ public class JavaParserAnalyzer {
                 });
             }
         }, null);
+        AnalysisResult result = new AnalysisResult();
+        result.addResult("dependencyGraph", dependencyGraph.toString());
+        result.addResult("riskGraph", riskGraph.toString());
+        analysisResultRepository.storeResult(filePath, result);
     }
 
     public DependencyGraph getDependencyGraph() {
@@ -51,6 +57,10 @@ public class JavaParserAnalyzer {
 
     public RiskGraph getRiskGraph() {
         return riskGraph;
+    }
+
+    public AnalysisResult getAnalysisResult(String id) {
+        return analysisResultRepository.retrieveResult(id);
     }
 
     public void visualizeRiskHeatmap() {
