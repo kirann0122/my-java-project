@@ -1,45 +1,53 @@
 package com.legacy.migration;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
-/**
- * Tracks migration progress.
- */
 public class MigrationProgressTracker {
-    private Map<String, MigrationStatus> migrationStatus;
+    private List<MigrationProgress> migrationProgressList;
 
     public MigrationProgressTracker() {
-        this.migrationStatus = new HashMap<>();
+        this.migrationProgressList = new ArrayList<>();
     }
 
-    /**
-     * Updates the migration status for a given class.
-     * 
-     * @param className the class to update migration status for
-     * @param status the migration status
-     */
-    public void updateMigrationStatus(String className, MigrationStatus status) {
-        migrationStatus.put(className, status);
+    public void updateMigrationStatus(String methodName, MigrationStatus status) {
+        MigrationProgress migrationProgress = new MigrationProgress(methodName, status, LocalDateTime.now());
+        migrationProgressList.add(migrationProgress);
     }
 
-    /**
-     * Gets the migration status for a given class.
-     * 
-     * @param className the class to get migration status for
-     * @return the migration status
-     */
-    public MigrationStatus getMigrationStatus(String className) {
-        return migrationStatus.getOrDefault(className, MigrationStatus.NOT_STARTED);
+    public List<MigrationProgress> getMigrationProgressList() {
+        return migrationProgressList;
     }
 
-    /**
-     * Enum for migration status.
-     */
     public enum MigrationStatus {
-        NOT_STARTED,
         IN_PROGRESS,
         COMPLETED,
         FAILED
+    }
+
+    public static class MigrationProgress {
+        private String methodName;
+        private MigrationStatus status;
+        private LocalDateTime timestamp;
+
+        public MigrationProgress(String methodName, MigrationStatus status, LocalDateTime timestamp) {
+            this.methodName = methodName;
+            this.status = status;
+            this.timestamp = timestamp;
+        }
+
+        public String getMethodName() {
+            return methodName;
+        }
+
+        public MigrationStatus getStatus() {
+            return status;
+        }
+
+        public String getTimestamp() {
+            return timestamp.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        }
     }
 }

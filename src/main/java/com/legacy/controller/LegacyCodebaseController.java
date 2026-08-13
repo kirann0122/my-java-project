@@ -1,32 +1,22 @@
 package com.legacy.controller;
 
-import com.legacy.analysis.JavaParserAnalyzer;
-import com.legacy.analysis.RiskGraph;
-import com.legacy.legacyCodebase.LegacyCodebase;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.legacy.analysis.CodeTransformer;
+import com.legacy.migration.MigrationProgressTracker;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.FileNotFoundException;
+import java.util.List;
 
 @RestController
 public class LegacyCodebaseController {
+    private CodeTransformer codeTransformer;
 
-    private final JavaParserAnalyzer javaParserAnalyzer;
-
-    @Autowired
-    public LegacyCodebaseController(JavaParserAnalyzer javaParserAnalyzer) {
-        this.javaParserAnalyzer = javaParserAnalyzer;
+    public LegacyCodebaseController() {
+        this.codeTransformer = new CodeTransformer();
     }
 
-    @GetMapping("/api/analyzeLegacyCodebase")
-    public String analyzeLegacyCodebase() throws FileNotFoundException {
-        javaParserAnalyzer.analyze("src/main/java");
-        return "Legacy Codebase analyzed";
-    }
-
-    @GetMapping("/api/getRiskGraph")
-    public RiskGraph getRiskGraph() {
-        return javaParserAnalyzer.getRiskGraph();
+    @GetMapping("/migration-progress")
+    public List<MigrationProgressTracker.MigrationProgress> getMigrationProgress() {
+        return codeTransformer.getMigrationProgressTracker().getMigrationProgressList();
     }
 }
