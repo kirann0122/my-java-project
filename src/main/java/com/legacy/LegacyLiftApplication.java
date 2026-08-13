@@ -1,20 +1,15 @@
 package com.legacy;
 
+import com.legacy.config.SecurityConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.context.annotation.Import;
 
 @SpringBootApplication
-@RestController
+@Import(SecurityConfig.class)
 public class LegacyLiftApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(LegacyLiftApplication.class, args);
-    }
-
-    @GetMapping("/api/legacyCodebase")
-    public String getLegacyCodebase() {
-        return "Legacy Codebase";
     }
 }

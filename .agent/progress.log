@@ -17,3 +17,4 @@
 17	2026-08-01	Implement a method to visualize the codebase as a risk heatmap
 18	2026-08-01	Create a React dashboard with graph visualization on the frontend
 19	2026-08-13	Integrate the backend and frontend components
+20	2026-08-13	Develop a method to display migration progress over time on the dashboard
