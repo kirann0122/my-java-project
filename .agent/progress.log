@@ -22,3 +22,4 @@
 22	2026-08-13	Add input validation and error handling for the REST API endpoints
 23	2026-08-13	Develop a method to store and retrieve legacy codebase analysis results
 24	2026-09-10	Implement a method to update the risk graph and migration progress in real-time
+25	2026-09-10	Create a DocumentationGenerator class to generate documentation for the legacy codebase

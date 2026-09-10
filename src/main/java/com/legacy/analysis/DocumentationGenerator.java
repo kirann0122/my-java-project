@@ -1,153 +1,59 @@
 package com.legacy.analysis;
 
-import com.github.javaparser.JavaParser;
-import com.github.javaparser.ParseProblemException;
-import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.ast.body.*;
-
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
+import java.nio.file.StandardOpenOption;
+import java.util.Map;
 
 /**
- * Generates simple documentation for a legacy codebase by extracting class,
- * field, and method signatures using JavaParser.
+ * Generates simple markdown documentation for the migrated codebase.
  *
- * The documentation is written to a plain‑text file (e.g., Markdown) at the
- * location specified by {@code outputFilePath}.
+ * <p>The documentation consists of one markdown file per class containing the
+ * provided description and an index file that lists all generated documents.</p>
  */
 public class DocumentationGenerator {
 
-    private final StringBuilder documentationBuilder = new StringBuilder();
-
     /**
-     * Generates documentation for all Java source files under {@code rootDirectory}
-     * and writes the result to {@code outputFilePath}.
+     * Generates markdown documentation files for the given classes.
      *
-     * @param rootDirectory   the directory containing the legacy source code
-     * @param outputFilePath  the file path where the generated documentation will be saved
-     * @throws FileNotFoundException if a source file cannot be read
-     * @throws IOException           if writing the documentation fails
+     * @param outputDirectory the directory where documentation files will be written.
+     * @param classDescriptions a map where the key is the fully qualified class name
+     *                          and the value is a short description of the class.
+     * @throws IOException if an I/O error occurs while writing files.
      */
-    public void generateDocumentation(String rootDirectory, String outputFilePath)
-            throws FileNotFoundException, IOException {
-        documentationBuilder.setLength(0);
-        traverseAndParse(new File(rootDirectory));
-        Path outPath = Path.of(outputFilePath);
-        Files.createDirectories(outPath.getParent());
-        Files.writeString(outPath, documentationBuilder.toString());
-    }
+    public void generateDocumentation(String outputDirectory,
+                                      Map<String, String> classDescriptions) throws IOException {
+        Path outputDir = Path.of(outputDirectory);
+        Files.createDirectories(outputDir);
 
-    private void traverseAndParse(File directory) throws FileNotFoundException {
-        File[] files = directory.listFiles();
-        if (files == null) {
-            return;
-        }
-        for (File file : files) {
-            if (file.isDirectory()) {
-                traverseAndParse(file);
-            } else if (file.getName().endsWith(".java")) {
-                parseFile(file);
-            }
-        }
-    }
+        StringBuilder indexBuilder = new StringBuilder("# Migration Documentation Index\n\n");
 
-    private void parseFile(File javaFile) throws FileNotFoundException {
-        CompilationUnit cu;
-        try {
-            cu = JavaParser.parse(javaFile);
-        } catch (ParseProblemException e) {
-            // Skip files that cannot be parsed; they are likely not valid Java source.
-            return;
+        for (Map.Entry<String, String> entry : classDescriptions.entrySet()) {
+            String className = entry.getKey();
+            String description = entry.getValue();
+
+            // Create a safe file name by replacing dots with underscores
+            String fileName = className.replace('.', '_') + ".md";
+            Path filePath = outputDir.resolve(fileName);
+
+            StringBuilder content = new StringBuilder();
+            content.append("# ").append(className).append("\n\n");
+            content.append(description).append("\n");
+
+            Files.writeString(filePath, content.toString(),
+                    StandardOpenOption.CREATE,
+                    StandardOpenOption.TRUNCATE_EXISTING,
+                    StandardOpenOption.WRITE);
+
+            indexBuilder.append("- [").append(className).append("](").append(fileName).append(")\n");
         }
 
-        cu.findAll(ClassOrInterfaceDeclaration.class).forEach(this::documentClass);
-        cu.findAll(EnumDeclaration.class).forEach(this::documentEnum);
-    }
-
-    private void documentClass(ClassOrInterfaceDeclaration clazz) {
-        documentationBuilder.append("## ").append(clazz.isInterface() ? "Interface" : "Class")
-                .append(": ").append(clazz.getNameAsString()).append('\n');
-
-        // Extends / Implements
-        if (!clazz.getExtendedTypes().isEmpty()) {
-            documentationBuilder.append("- Extends: ");
-            documentationBuilder.append(String.join(", ",
-                    clazz.getExtendedTypes().stream()
-                            .map(t -> t.getNameAsString())
-                            .toList()));
-            documentationBuilder.append('\n');
-        }
-        if (!clazz.getImplementedTypes().isEmpty()) {
-            documentationBuilder.append("- Implements: ");
-            documentationBuilder.append(String.join(", ",
-                    clazz.getImplementedTypes().stream()
-                            .map(t -> t.getNameAsString())
-                            .toList()));
-            documentationBuilder.append('\n');
-        }
-
-        // Fields
-        List<FieldDeclaration> fields = clazz.getFields();
-        if (!fields.isEmpty()) {
-            documentationBuilder.append("\n### Fields\n");
-            for (FieldDeclaration field : fields) {
-                String type = field.getElementType().asString();
-                field.getVariables().forEach(var -> {
-                    documentationBuilder.append("- ")
-                            .append(type).append(' ')
-                            .append(var.getNameAsString()).append('\n');
-                });
-            }
-        }
-
-        // Methods
-        List<MethodDeclaration> methods = clazz.getMethods();
-        if (!methods.isEmpty()) {
-            documentationBuilder.append("\n### Methods\n");
-            for (MethodDeclaration method : methods) {
-                documentationBuilder.append("- ")
-                        .append(method.getDeclarationAsString(false, false, true))
-                        .append('\n');
-            }
-        }
-
-        documentationBuilder.append("\n---\n\n");
-    }
-
-    private void documentEnum(EnumDeclaration enumDecl) {
-        documentationBuilder.append("## Enum: ").append(enumDecl.getNameAsString()).append('\n');
-
-        // Enum constants
-        if (!enumDecl.getEntries().isEmpty()) {
-            documentationBuilder.append("\n### Constants\n");
-            enumDecl.getEntries().forEach(entry ->
-                    documentationBuilder.append("- ").append(entry.getNameAsString()).append('\n'));
-        }
-
-        // Methods inside enum
-        List<MethodDeclaration> methods = enumDecl.getMethods();
-        if (!methods.isEmpty()) {
-            documentationBuilder.append("\n### Methods\n");
-            for (MethodDeclaration method : methods) {
-                documentationBuilder.append("- ")
-                        .append(method.getDeclarationAsString(false, false, true))
-                        .append('\n');
-            }
-        }
-
-        documentationBuilder.append("\n---\n\n");
-    }
-
-    /**
-     * Returns the documentation generated so far as a string.
-     *
-     * @return the current documentation content
-     */
-    public String getDocumentation() {
-        return documentationBuilder.toString();
+        // Write the index file
+        Path indexPath = outputDir.resolve("README.md");
+        Files.writeString(indexPath, indexBuilder.toString(),
+                StandardOpenOption.CREATE,
+                StandardOpenOption.TRUNCATE_EXISTING,
+                StandardOpenOption.WRITE);
     }
 }
