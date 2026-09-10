@@ -1,38 +1,45 @@
 package com.legacy.analysis;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Represents a graph of risk scores for legacy classes.
+ */
 public class RiskGraph {
-    private Map<String, RiskLevel> riskNodes;
+    private final Map<String, Double> riskScores;
 
     public RiskGraph() {
-        this.riskNodes = new HashMap<>();
+        this.riskScores = new HashMap<>();
     }
 
-    public void addRiskNode(String className, String riskLevel, String description) {
-        riskNodes.put(className, new RiskLevel(riskLevel, description));
+    /**
+     * Updates or adds a risk score for the specified class.
+     *
+     * @param className the fully qualified name of the class
+     * @param riskScore the calculated risk score (e.g., 0.0 – 1.0)
+     */
+    public void updateRisk(String className, double riskScore) {
+        riskScores.put(className, riskScore);
     }
 
-    public Map<String, RiskLevel> getRiskNodes() {
-        return riskNodes;
+    /**
+     * Retrieves the risk score for a given class.
+     *
+     * @param className the fully qualified name of the class
+     * @return the risk score, or null if not present
+     */
+    public Double getRisk(String className) {
+        return riskScores.get(className);
     }
 
-    public static class RiskLevel {
-        private String riskLevel;
-        private String description;
-
-        public RiskLevel(String riskLevel, String description) {
-            this.riskLevel = riskLevel;
-            this.description = description;
-        }
-
-        public String getRiskLevel() {
-            return riskLevel;
-        }
-
-        public String getDescription() {
-            return description;
-        }
+    /**
+     * Returns an unmodifiable view of all risk scores.
+     *
+     * @return map of class names to risk scores
+     */
+    public Map<String, Double> getAllRisks() {
+        return Collections.unmodifiableMap(riskScores);
     }
 }

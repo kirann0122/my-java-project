@@ -1,53 +1,50 @@
 package com.legacy.migration;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-
+/**
+ * Tracks migration progress across the codebase.
+ */
 public class MigrationProgressTracker {
-    private List<MigrationProgress> migrationProgressList;
+    private int totalTasks;
+    private int completedTasks;
 
     public MigrationProgressTracker() {
-        this.migrationProgressList = new ArrayList<>();
+        this.totalTasks = 0;
+        this.completedTasks = 0;
     }
 
-    public void updateMigrationStatus(String methodName, MigrationStatus status) {
-        MigrationProgress migrationProgress = new MigrationProgress(methodName, status, LocalDateTime.now());
-        migrationProgressList.add(migrationProgress);
+    /**
+     * Sets the total number of migration tasks to be performed.
+     *
+     * @param totalTasks total task count
+     */
+    public void setTotalTasks(int totalTasks) {
+        this.totalTasks = totalTasks;
     }
 
-    public List<MigrationProgress> getMigrationProgressList() {
-        return migrationProgressList;
+    /**
+     * Increments the count of completed tasks.
+     */
+    public void incrementProgress() {
+        completedTasks++;
     }
 
-    public enum MigrationStatus {
-        IN_PROGRESS,
-        COMPLETED,
-        FAILED
+    /**
+     * Returns the migration progress as a percentage.
+     *
+     * @return progress percentage (0.0 – 100.0)
+     */
+    public double getProgressPercentage() {
+        if (totalTasks == 0) {
+            return 0.0;
+        }
+        return (completedTasks * 100.0) / totalTasks;
     }
 
-    public static class MigrationProgress {
-        private String methodName;
-        private MigrationStatus status;
-        private LocalDateTime timestamp;
+    public int getCompletedTasks() {
+        return completedTasks;
+    }
 
-        public MigrationProgress(String methodName, MigrationStatus status, LocalDateTime timestamp) {
-            this.methodName = methodName;
-            this.status = status;
-            this.timestamp = timestamp;
-        }
-
-        public String getMethodName() {
-            return methodName;
-        }
-
-        public MigrationStatus getStatus() {
-            return status;
-        }
-
-        public String getTimestamp() {
-            return timestamp.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        }
+    public int getTotalTasks() {
+        return totalTasks;
     }
 }
