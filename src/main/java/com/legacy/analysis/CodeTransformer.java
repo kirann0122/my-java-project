@@ -8,10 +8,12 @@ import com.legacy.migration.MigrationProgressTracker;
 public class CodeTransformer {
     private MigrationProgressTracker migrationProgressTracker;
     private RiskGraph riskGraph;
+    private DocumentationGenerator documentationGenerator;
 
     public CodeTransformer() {
         this.migrationProgressTracker = new MigrationProgressTracker();
         this.riskGraph = new RiskGraph();
+        this.documentationGenerator = new DocumentationGenerator();
     }
 
     public MigrationProgressTracker getMigrationProgressTracker() {
@@ -20,6 +22,10 @@ public class CodeTransformer {
 
     public RiskGraph getRiskGraph() {
         return riskGraph;
+    }
+
+    public DocumentationGenerator getDocumentationGenerator() {
+        return documentationGenerator;
     }
 
     /**
@@ -34,6 +40,9 @@ public class CodeTransformer {
         }
         if (migrationProgressTracker != null) {
             migrationProgressTracker.incrementProgress();
+        }
+        if (documentationGenerator != null) {
+            documentationGenerator.generateDocumentation(className);
         }
     }
 
