@@ -1,6 +1,8 @@
 package com.legacy.analysis;
 
 import com.legacy.migration.MigrationProgressTracker;
+import com.legacy.validation.MigrationValidator;
+import java.io.FileNotFoundException;
 
 /**
  * Handles code transformation and updates migration progress.
@@ -9,11 +11,13 @@ public class CodeTransformer {
     private MigrationProgressTracker migrationProgressTracker;
     private RiskGraph riskGraph;
     private DocumentationGenerator documentationGenerator;
+    private MigrationValidator migrationValidator;
 
     public CodeTransformer() {
         this.migrationProgressTracker = new MigrationProgressTracker();
         this.riskGraph = new RiskGraph();
         this.documentationGenerator = new DocumentationGenerator();
+        this.migrationValidator = new MigrationValidator();
     }
 
     public MigrationProgressTracker getMigrationProgressTracker() {
@@ -44,6 +48,20 @@ public class CodeTransformer {
         if (documentationGenerator != null) {
             documentationGenerator.generateDocumentation(className);
         }
+    }
+
+    /**
+     * Tests and validates the migrated codebase by generating characterization tests
+     * for all legacy classes and ensuring that at least one test was produced.
+     *
+     * @param rootDirectory the root directory of the migrated codebase
+     * @return true if validation succeeds (i.e., tests were generated), false otherwise
+     * @throws FileNotFoundException if any source file cannot be found during test generation
+     */
+    public boolean validateMigratedCodebase(String rootDirectory) throws FileNotFoundException {
+        migrationValidator.validateMigratedCodebase(rootDirectory);
+        // If no exception, validation succeeded; return true if any tests were generated
+        return migrationValidator.getGeneratedTestCount() > 0;
     }
 
     // ... existing code ...
